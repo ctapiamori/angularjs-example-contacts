@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+
+<style type="text/css">
+body {
+padding-top: 70px;
+}
+
+</style>
+</head>
+<body ng-app="directorioProject">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="container" ng-controller="DirectorioController">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a class="navbar-brand" href="#">Directorio</a>
+</div>
+<div class="collapse navbar-collapse">
+<ul class="nav navbar-nav navbar-right">
+<li ng-class="getClass('/contactos')"><a href="#contactos">Contactos</a></li>
+<!--li ng-class="getClass('/citas')"><a href="#citas">Citas</a></li-->
+</ul>
+</div>
+</div>
+</div>
+
+<div class="container">
+<div ng-view>
+</div>
+<footer>
+<div class="row">
+<div class="col-lg-12">
+<p>Copyright (c) - César Tapia Mori - 2014</p>
+</div>
+</div>
+</footer>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-route.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+var contacts = [
+{
+id: 1,
+nombre: "Juan Mori Mores",
+telefono: "(01) 255-4695",
+movil: "9989-9999",
+correo: "jaun@gmail.com",
+direccion: "Jr. Cajamarca 999 - Urb. Palmeras",
+image: "image/no-image.jpg"
+},
+{
+id: 2,
+nombre: "Pedro Morante Moscoso",
+telefono: "(01) 554-9885",
+movil: "9789-4566",
+correo: "pedro@gmail.com",
+direccion: "Los Naranjos 156",
+image: "image/no-image.jpg"
+},
+{
+id: 3,
+nombre: "Jose Luis Tapia Mori",
+telefono: "(01) 535-9886",
+movil: "9986-5569",
+correo: "jose@gmail.com",
+direccion: "Av. Grau 2254",
+image: "image/no-image.jpg"
+},
+{
+id: 4,
+nombre: "Marilin Huancas Marchena",
+telefono: "(01) 535-9886",
+movil: "9986-5569",
+correo: "marilin@gmail.com",
+direccion: "Av. Grau 2254",
+image: "image/no-image.jpg"
+},
+{
+id: 5,
+nombre: "Luis Cordova Leon",
+telefono: "(01) 535-9886",
+movil: "9986-5569",
+correo: "luis.cordovaleon@gmail.com",
+direccion: "Av. Tupac 8976",
+image: "image/no-image.jpg"
+}
+];
+</script>
+<script>
+var app = angular.module('directorioProject', ['ngRoute'])
+.config(['$routeProvider','$locationProvider', function($routeProvider, $locationProvider){
+$routeProvider
+.when('/contactos', {
+templateUrl: 'template/contactos.html',
+controller: 'ContactoController',
+})
+.when('/contactos/add', {
+templateUrl: 'template/contacto.html',
+controller: 'ContactoController',
+})
+.when('/contactos/:contactoId', {
+templateUrl: 'template/contacto.html',
+controller: 'ContactoController',
+})
+.when('/citas', {
+templateUrl: 'template/citas.html',
+controller: 'CitaController'
+})
+.otherwise({
+redirectTo: '/contactos'
+});
+
+//$locationProvider.html5Mode(true);
+}])
+.controller('DirectorioController', ['$scope','$location', function($scope, $location) {
+$scope.getClass = function(path) {
+if ($location.path().substr(0, path.length) == path) {
+return "active"
+} else {
+return ""
+}
+}
+}])
+.controller('ContactoController', ['$scope', '$routeParams', function($scope, $routeParams) {
+$scope.currentContacto = {};
+console.log($routeParams.contactoId)
+if($routeParams.contactoId == undefined){
+$scope.contacts = contacts;
+
+$scope.currentContacto.image = "image/no-image.jpg";
+$scope.currentContacto.id = $scope.contacts.length+1;
+}else{
+contacto = contacts.filter(function(contacto) {
+if (contacto.id == $routeParams.contactoId) {
+return true;
+}
+});
+
+if(contacto.length)
+$scope.currentContacto = contacto[0];
+}
+
+$scope.addContacto = function() {
+document.location = "#contactos/add";
+};
+
+$scope.editContacto = function(id) {
+document.location = "#contactos/" + id;
+};
+
+$scope.saveContacto = function() {
+$scope.contacts.push($scope.currentContacto);
+document.location = "#contactos";
+//console.log(JSON.stringify($scope.currentContacto));
+};
+
+$scope.eliminarContacto = function(index) {
+$scope.contacts.splice(index,1);
+}
+
+}])
+.controller('CitaController',['$scope', function($scope) {
+$scope.citas = [];
+}])
+.filter('todoFilter', function ($location) {
+return function (input) {
+var filtered = {};
+angular.forEach(input, function (todo, id) {
+var path = $location.path();
+if (path === '/active') {
+if (!todo.completed) {
+filtered[id] = todo;
+}
+} else if (path === '/completed') {
+if (todo.completed) {
+filtered[id] = todo;
+}
+} else {
+filtered[id] = todo;
+}
+});
+return filtered;
+};
+});
+</script>
+<script type="text/ng-template" id="template/contacto.html">
+<h1>Contacto</h1>
+<form role="form" ng-submit="saveContacto()">
+<input type="hidden" ng-model="currentContacto.id">
+<input type="hidden" ng-model="currentContacto.image">
+<div class="form-group">
+<label for="nombre">Nombre:</label><input id="nombre" type="text" ng-model="currentContacto.nombre" class="form-control" placeholder="Nombres y Apellidos" required>
+</div>
+<div class="form-group">
+<label for="telefono">Teléfono:</label><input id="telefono" type="text" ng-model="currentContacto.telefono" class="form-control" placeholder="# de Telefono" required>
+</div>
+<div class="form-group">
+<label for="movil">Movil:</label><input id="movil" type="text" ng-model="currentContacto.movil" class="form-control" placeholder="# Movil" required>
+</div>
+<div class="form-group">
+<label for="correo">Correo:</label><input id="correo" type="text" ng-model="currentContacto.correo" class="form-control" placeholder="ejemplo@dominio.com" required>
+</div>
+<div class="form-group">
+<label for="direccion">Dirección:</label><input id="direccion" type="text" ng-model="currentContacto.direccion" class="form-control" placeholder="Av./Jr./Calle #" required>
+</div>
+<a ng-href='#' class="btn btn-default">Cancelar</a>
+<button class="btn btn-primary" type="submit">Grabar</button>
+</form>
+</script>
+<script type="text/ng-template" id="template/citas.html">
+<h1>Citas</h1>
+</script>
+<script type="text/ng-template" id="template/contactos.html">
+<h1>Contactos</h1>
+
+<div>
+<div class="panel">
+<div class="input-group">
+<input type="text" class="form-control">
+<div class="input-group-btn">
+<button class="btn btn-default" type="button"><i class="fa fa-search"></i>&nbsp;Buscar</button>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div ng-repeat="contact in contacts" class="col-md-4">
+<div class="panel panel-primary">
+<div class="panel-heading clearfix">
+<div class="panel-title pull-left" style="padding-top: 7.5px;">Contacto</div>
+<div class="pull-right">
+<button class="btn btn-primary" ng-click="editContacto(contact.id)"><i class="fa fa-pencil"></i></button>
+<button class="btn btn-danger" ng-click="eliminarContacto($index)"><i class="fa fa-trash-o"></i></button>
+</div>
+</div>
+<div class="panel-body">
+<h4>{{contact.nombre}}</h4>
+<div class="pull-left">
+<div class="thumbnail">
+<img ng-src="{{contact.image}}" width="75">
+</div>
+</div>
+<div>
+<div>
+<label>Telef.:</label> {{contact.telefono}}
+</div>
+<div>
+<label>Celular:</label> {{contact.movil}}
+</div>
+
+<div>
+<label>Dirección:</label> {{contact.direccion}}
+</div>
+</div>
+</div>
+<div class="panel-footer">
+<a href="mailto:{{contact.correo}}"><i class="fa fa-envelope-o"></i>&nbsp;{{contact.correo}}</a>
+</div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="panel panel-default" style="cursor: pointer;" ng-click="addContacto()">
+<div class="panel-heading clearfix">
+<div class="panel-title pull-left" style="padding-top: 7.5px;">Contacto</div>
+</div>
+<div class="panel-body">
+<h4>Agregar Contacto</h4>
+<div class="pull-left">
+<div class="thumbnail">
+<img ng-src="image/no-image.jpg" width="75" src="image/no-image.jpg">
+</div>
+</div>
+<div>
+
+</div>
+<br/>
+</div>
+<div class="panel-footer">&nbsp;</div>
+</div>
+</div>
+</div>
+</script>
+</body>
+</html>

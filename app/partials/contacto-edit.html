@@ -1,0 +1,22 @@
+<h1>Contacto</h1>
+<form role="form" ng-submit="saveContacto()">
+<input type="hidden" ng-model="currentContacto.id">
+<input type="hidden" ng-model="currentContacto.image">
+<div class="form-group">
+<label for="nombre">Nombre:</label><input id="nombre" type="text" ng-model="currentContacto.nombre" class="form-control" placeholder="Nombres y Apellidos" required>
+</div>
+<div class="form-group">
+<label for="telefono">Teléfono:</label><input id="telefono" type="text" ng-model="currentContacto.telefono" class="form-control" placeholder="# de Telefono" required>
+</div>
+<div class="form-group">
+<label for="movil">Movil:</label><input id="movil" type="text" ng-model="currentContacto.movil" class="form-control" placeholder="# Movil" required>
+</div>
+<div class="form-group">
+<label for="correo">Correo:</label><input id="correo" type="text" ng-model="currentContacto.correo" class="form-control" placeholder="ejemplo@dominio.com" required>
+</div>
+<div class="form-group">
+<label for="direccion">Dirección:</label><input id="direccion" type="text" ng-model="currentContacto.direccion" class="form-control" placeholder="Av./Jr./Calle #" required>
+</div>
+<a ng-href='#' class="btn btn-default">Cancelar</a>
+<button class="btn btn-primary" type="submit">Grabar</button>
+</form>
